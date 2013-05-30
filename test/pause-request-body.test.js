@@ -5,12 +5,10 @@ require('should');
 var connect = require('connect'),
     timers = require('timers'),
     crypto = require('crypto'),
-    http = require('http'),
-    fs = require('fs'),
     request = require('request'),
     Stream = require('stream'),
     es = require('event-stream'),
-    pause_request_body = require('../lib/pause-request-body.js');
+    pause_request_body = require('..');
 
 var app= connect()
   .use(pause_request_body.pauser())
