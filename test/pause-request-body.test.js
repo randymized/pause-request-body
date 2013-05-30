@@ -28,23 +28,21 @@ var app= connect()
   })
   .listen(3000);
 
-function sink(cb) {
+function string_accumulating_sink(cb) {
   var s = new Stream;
+  var result= ''
   s.writable = true;
-  var hash = crypto.createHash('sha1');
-
-  var bytes = 0;
 
   s.write = function (buf) {
-    hash.update(buf)
-    return true
+      result+= buf.toString()
+      return true
   };
 
   s.end = function (buf) {
     if (arguments.length) s.write(buf);
 
     s.writable = false;
-    cb(hash.digest('hex'))
+    cb(result)
   };
 
   s.destroy = function () {
@@ -53,11 +51,14 @@ function sink(cb) {
   return s;
 }
 
-function hash_comparing_sink(get_other_hash,done) {
-  return sink(function (result) {
-    get_other_hash().digest('hex').should.equal(result);
-    done();
-  });
+
+function stream_to_app(get_other_hash,done) {
+  var r= request.post('http://localhost:3000')
+  r.pipe(string_accumulating_sink(function (result) {
+      get_other_hash().digest('hex').should.equal(result);
+      done();
+    }));
+  return r
 }
 
 function hashing_stream() {
@@ -77,7 +78,7 @@ function receive_and_test(source,done) {
   es.pipeline(
     source,
     hstream,
-    hash_comparing_sink(hstream.get_hash,done)
+    stream_to_app(hstream.get_hash,done)
   )
 }
 
@@ -94,7 +95,7 @@ describe( 'pause-request-body', function() {
     } );
     it( 'should receive a tiny amount of data without loss', function(done) {
       var source = es.readable(function (count, callback) {
-        this.emit('a')
+        this.emit('data','a')
         this.emit('end')
         callback()
       })
