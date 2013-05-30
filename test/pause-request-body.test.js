@@ -55,9 +55,15 @@ function sink(cb) {
   return s;
 }
 
+function hash_comparing_sink(get_other_hash,done) {
+  return sink(function (result) {
+    get_other_hash().digest('hex').should.equal(result);
+    done();
+  });
+}
+
 function hashing_stream() {
   var hash = crypto.createHash('sha1');
-  debugger
   var s= es.map(function (data, callback) {
     hash.update(data)
     callback(null, data)
@@ -66,6 +72,15 @@ function hashing_stream() {
     return hash;
   }
   return s
+}
+
+function receive_and_test(source,done) {
+  var hstream = hashing_stream()
+  es.pipeline(
+    source,
+    hstream,
+    hash_comparing_sink(hstream.get_hash,done)
+  )
 }
 
 describe( 'pause-request-body', function() {
@@ -77,24 +92,15 @@ describe( 'pause-request-body', function() {
       pause_request_body.resumer.should.be.a( 'function' );
     } );
     it( 'should receive a sizable file without loss', function(done) {
-      var hstream = hashing_stream()
-      var source= request.get('http://nodejs.org/dist/v0.10.8/node.lib')
-      source.pipe(hstream).pipe(sink(function (result) {
-        hstream.get_hash().digest('hex').should.equal(result)
-        done()
-      } ));
+      receive_and_test(request.get('http://nodejs.org/dist/v0.10.8/node.lib'),done)
     } );
     it( 'should receive a tiny amount of data without loss', function(done) {
-      var hstream = hashing_stream()
       var source = es.readable(function (count, callback) {
         this.emit('a')
         this.emit('end')
         callback()
       })
-      source.pipe(hstream).pipe(sink(function (result) {
-        hstream.get_hash().digest('hex').should.equal(result)
-        done()
-      } ));
+      receive_and_test(source,done)
     } );
   } );
 } );
