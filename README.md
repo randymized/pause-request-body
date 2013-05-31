@@ -44,6 +44,8 @@ app.configure(function (){
 ## Release History
 _(Nothing yet)_
 
+[![Build Status](https://secure.travis-ci.org/randymized/pause-request-body.png?branch=master)]
+
 ## License
 Copyright (c) 2013 Randy McLaughlin
 Licensed under the MIT license.
