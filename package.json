@@ -36,7 +36,8 @@
     "grunt": "~0.4.1",
     "connect": "~2.7.10",
     "request": "~2.21.0",
-    "event-stream": "~3.0.14"
+    "event-stream": "~3.0.14",
+    "string-accumulating-sink": "~0.1.0"
   },
   "keywords": []
 }

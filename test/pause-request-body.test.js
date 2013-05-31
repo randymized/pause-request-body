@@ -8,6 +8,7 @@ var connect = require('connect'),
     request = require('request'),
     Stream = require('stream'),
     es = require('event-stream'),
+    string_accumulating_sink = require('string-accumulating-sink'),
     pause_request_body = require('..');
 
 var app= connect()
@@ -27,30 +28,6 @@ var app= connect()
     })
   })
   .listen(3000);
-
-function string_accumulating_sink(cb) {
-  var s = new Stream;
-  var result= ''
-  s.writable = true;
-
-  s.write = function (buf) {
-      result+= buf.toString()
-      return true
-  };
-
-  s.end = function (buf) {
-    if (arguments.length) s.write(buf);
-
-    s.writable = false;
-    cb(result)
-  };
-
-  s.destroy = function () {
-      s.writable = false;
-  };
-  return s;
-}
-
 
 function stream_to_app(get_other_hash,done) {
   var r= request.post('http://localhost:3000')
