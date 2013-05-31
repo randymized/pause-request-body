@@ -1,6 +1,6 @@
 # pause-request-body
 
-> Middleware to pause streaming of the request body until a receiver is ready.
+Middleware to pause streaming of the request body until a receiver is ready.
 
 Problem: if any asychronous operations occur in the middleware stack before the
 request body is parsed, the body will likely no longer be available.  The
@@ -16,7 +16,7 @@ paused between the two.
 Install the module with: `npm install pause-request-body`
 
 ```javascript
-#Connect middleware stack:
+//Connect middleware stack:
 var pause_request_body = require( 'pause-request-body' );
 var app= connect()
   // ...
@@ -29,7 +29,7 @@ var app= connect()
 ```
 
 ```javascript
-#Express middleware stack:
+//Express middleware stack:
 var pause_request_body = require( 'pause-request-body' );
 var app = express();
 app.configure(function (){
