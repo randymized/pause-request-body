@@ -1,5 +1,13 @@
 # pause-request-body
 
+[![Not Maintained](https://img.shields.io/badge/Maintenance%20Level-Abandoned-orange.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
+
+
+pause-request-body is no longer being actively developed and has been archived. 
+You are still welcome to use it but you may want to check for any forks that are more actively maintained.
+If it is of value to you, you are welcome to fork it or start a new project and incorporate its code into your project.
+
+## Description
 Middleware to pause streaming of the request body until a receiver is ready.
 
 Problem: if any asychronous operations occur in the middleware stack before the
